@@ -15,7 +15,11 @@ func ReadFile(name string) []string {
 		os.Exit(-1)
 	}
 	var states []string
-	json.Unmarshal(configFile, &states)
+	err = json.Unmarshal(configFile, &states)
+	if err != nil {
+		fmt.Println("Error: Can't Parse Input File")
+		os.Exit(-1)
+	}
 	return states
 }
 
