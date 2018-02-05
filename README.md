@@ -6,7 +6,7 @@ Solving n-queens problem with Genetic Programming in Go
 
 `cd $GOPATH/src/github.com/sharath/n-queens`
 
-`go build`
+`go build main.go GA.go`
 
 `./main`
 
