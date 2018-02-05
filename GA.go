@@ -1,4 +1,4 @@
-package ga_8queens
+package main
 
 import (
 	"math"

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"github.com/sharath/ga-8queens"
+	"github.com/sharath/n-queens"
 )
 
 func ReadFile(name string) ([]string, int) {
