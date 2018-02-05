@@ -14,3 +14,6 @@ Solving n-queens problem with Genetic Programming in Go
 The positions are represented with just the row numbers of each queen.
 Just modify 8queens.json or make a new json file following that format and call
 `./main <file.json>`
+
+#### Known Issues
+* Doesn't support n > 9
