@@ -42,5 +42,5 @@ func main() {
 		filename = "initial_population.json"
 	}
 	initialPopulation, n := ReadFile(filename)
-	ga_8queens.StartGA(initialPopulation, 5, n)
+	ga_8queens.StartGA(initialPopulation, 5, n, 0.4, true)
 }
