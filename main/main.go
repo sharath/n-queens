@@ -39,7 +39,7 @@ func main() {
 	if len(os.Args) > 1 {
 		filename = os.Args[1]
 	} else {
-		filename = "initial_population.json"
+		filename = "8queens.json"
 	}
 	initialPopulation, n := ReadFile(filename)
 	ga_8queens.StartGA(initialPopulation, 5, n, 0.4, true)
