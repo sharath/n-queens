@@ -9,17 +9,25 @@ import (
 )
 
 var size int
+var threshold float64
+var verbose bool
 
-func StartGA(initialPopulation []string, iterations int, s int) {
+func StartGA(initialPopulation []string, iterations int, s int, th float64, v bool) {
+	verbose = v
+	rand.Seed(int64(time.Now().Second() * time.Now().Nanosecond()))
 	size = s
+	threshold = th
 	fmt.Println("Started GA. This might take a while...")
 	population := initialPopulation
 	var solved bool
 	var solution string
-	var i int
+	var g int
 	for !solved {
-		i++
+		g++
 		population = GAIteration(population)
+		if verbose {
+			fmt.Printf("Generation %d\n", g)
+		}
 		for _, t := range population {
 			if Fitness(t) == (size * (size - 1)) {
 				solution = t
@@ -27,7 +35,7 @@ func StartGA(initialPopulation []string, iterations int, s int) {
 			}
 		}
 	}
-	fmt.Printf("Solution: \"%s\" in %d Iterations\n", solution, i)
+	fmt.Printf("Solution: \"%s\" in %d Generations\n", solution, g)
 }
 
 // should return the number of non-attacking pairs of queens
@@ -52,44 +60,52 @@ func Fitness(individual string) int {
 }
 
 // choose randomly from population favoring fit individuals
+// not sure if i implemented this correctly
 func RandomSelection(population []string) string {
-	/*// TODO: favor more fit individuals
-	a := population[rand.Int()%(len(population)-1)]
-	b := population[rand.Int()%(len(population)-1)]
+	a := population[rand.Int()%len(population)]
+	b := population[rand.Int()%len(population)]
 	if Fitness(a) > Fitness(b) {
 		return a
 	} else {
 		return b
-	}*/
-	return population[rand.Int()%(len(population)-1)]
+	}
 }
 
 func GAIteration(population []string) []string {
 	var newPopulation []string
-	threshold := 0.4
 	for i := 0; i < len(population); i++ {
 		x := RandomSelection(population)
 		y := RandomSelection(population)
-		child1, child2 := Reproduce(x, y)
-		child1 = Mutate(child1, threshold)
-		child2 = Mutate(child2, threshold)
-		newPopulation = append(newPopulation, child1)
-		newPopulation = append(newPopulation, child2)
+		child1, _ := Reproduce(x, y)
+		child1 = Mutate(child1)
+		//child2 = Mutate(child2)
+		newPopulation = AddIfNotContains(newPopulation, child1)
+		//newPopulation = AddIfNotContains(newPopulation, child2)
 	}
 	return newPopulation
+}
+func AddIfNotContains(set []string, value string) []string {
+	var contains bool
+	for _, t := range set {
+		if t != value {
+			contains = true
+		}
+	}
+	if !contains {
+		set = append(set, value)
+	}
+	return set
 }
 
 //generate a random number c from 1 to len(x) and split into substrings
 func Reproduce(individualX string, individualY string) (string, string) {
-	rand.Seed(int64(time.Now().Nanosecond()))
-	r := rand.Int() % len(individualX)
-	n := (r * r) % len(individualX)
+	r := rand.Int() % size
+	n := (r * r) % size
 	return individualX[n:] + individualY[:n], individualY[n:] + individualX[:n]
 }
 
-func Mutate(c string, threshold float64) string {
-	rand.Seed(int64(time.Now().Nanosecond()))
-	if float64(rand.Uint64()%10000)/10000.0 < threshold {
+func Mutate(c string) string {
+	if rand.Float64() < threshold {
 		r := strconv.Itoa(rand.Int()%size + 1)
 		i := rand.Int() % size
 		var n string
@@ -100,8 +116,14 @@ func Mutate(c string, threshold float64) string {
 				n += r
 			}
 		}
+		if verbose {
+			fmt.Printf("Mutated! \"%s\" -> \"%s\"\n", c, n)
+		}
 		return n
 	} else {
+		if verbose {
+			fmt.Printf("\"%s\"\n", c)
+		}
 		return c
 	}
 }
